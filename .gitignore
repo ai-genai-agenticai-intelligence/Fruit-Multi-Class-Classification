@@ -1,0 +1,11 @@
+# Large source archive; the extracted `fruits/` dataset is tracked instead.
+fruits.zip
+
+# Operating-system and Python generated files
+.DS_Store
+__MACOSX/
+__pycache__/
+*.py[cod]
+
+# Streamlit local configuration
+.streamlit/secrets.toml
