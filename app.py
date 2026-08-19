@@ -2,9 +2,8 @@ from pathlib import Path
 
 import numpy as np
 import streamlit as st
-import tensorflow as tf
+from ai_edge_litert.interpreter import Interpreter
 from PIL import Image
-
 
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH = BASE_DIR / "model.tflite"
@@ -21,7 +20,7 @@ def load_interpreter():
     if not MODEL_PATH.exists():
         raise FileNotFoundError(f"Model file not found: {MODEL_PATH}")
 
-    interpreter = tf.lite.Interpreter(model_path=str(MODEL_PATH))
+    interpreter = Interpreter(model_path=str(MODEL_PATH))
     interpreter.allocate_tensors()
     return interpreter
 
@@ -56,7 +55,9 @@ def predict(image: Image.Image) -> np.ndarray:
 
 
 st.title("🍎 Fruit Multi-Class Classifier")
-st.write("Upload a fruit image to classify it as an **apple**, **banana**, or **orange**.")
+st.write(
+    "Upload a fruit image to classify it as an **apple**, **banana**, or **orange**."
+)
 
 with st.sidebar:
     st.header("Model details")
@@ -82,8 +83,15 @@ else:
             predicted_label = CLASS_NAMES[predicted_index].title()
             confidence = probabilities[predicted_index]
 
-            st.success(f"Prediction: **{predicted_label}** ({confidence:.1%} confidence)")
+            st.success(
+                f"Prediction: **{predicted_label}** ({confidence:.1%} confidence)"
+            )
             st.subheader("Class probabilities")
-            st.bar_chart({label.title(): float(score) for label, score in zip(CLASS_NAMES, probabilities)})
+            st.bar_chart(
+                {
+                    label.title(): float(score)
+                    for label, score in zip(CLASS_NAMES, probabilities)
+                }
+            )
         except Exception as error:
             st.error(f"Could not run the prediction: {error}")
